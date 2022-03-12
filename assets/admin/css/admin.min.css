@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;700&display=swap');
+:root {
+    --wc-background: #F1F5F9;
+    --wc-blue : #1E293B;
+    --wc-white : #fff;
+    --wc-font-family : 'Inter';
+    --wc-text : 17px;
+    --wc-border : rgb(226 232 240 );
+    --wc-btn-bg : #60A5FA;
+}
+div#wpwrap {
+    background-color: var(--wc-background);
+}
+div#wpcontent{
+    padding: 0;
+}
+.wc-p5{
+    padding: 5px;
+}
+.wc-p10{
+    padding: 10px;
+}
+.wc-p15 {
+    padding: 15px;
+}
+.wc-p20{
+    padding: 20px;
+}
+.wc-p25{
+    padding: 25px;
+}
+.wc-m10{
+    margin: 10px;
+}
+.wc-m15 {
+    margin: 15px;
+}
+.wc-m20{
+    margin: 20px;
+}
+.wc-m25{
+    margin: 25px;
+}
+.wc-h100{
+    height: 100%;
+}
+.wc-w100{
+    width: 100%;
+}
+.wc-flex{
+    display: flex;
+    align-items: stretch;
+}
+.wc-mb5{
+    margin-bottom: 5px ;
+}
+.wc-flex > div{
+    flex: 1 ;
+}
+.wc-center{
+    text-align: center;
+}
+.wc-header{
+    background-color: var(--wc-white);
+    padding:0 20px ;
+    font-family: var(--wc-font-family);
+    font-size: var(--wc-text);
+    border-bottom: 1px solid var(--wc-border);
+    display: flex;
+    justify-content: space-between;
+}
+.wc-body{
+    padding: 30px;
+    font-family: var(--wc-font-family);
+}
+.wc-box{
+    background-color: var(--wc-white);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
+    border: 1px solid var(--wc-border);
+}
+.wc-btn {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    height: 40px;
+    background-color: var(--wc-btn-bg);
+    border: 0;
+    color: var(--wc-white);
+    cursor: pointer;
+    min-width: 250px;
+    font-size: 15px;
+    border-radius: 0.25rem;
+}
+.wc-nav{
+    background-color: var(--wc-blue);
+    color: var(--wc-white);
+    max-width: 200px;
+    font-size: 15px;
+}
+.wc-heading{
+    font-size: 20px;
+}
+
+.wc-form form .wc-form-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+.wc-form form label{
+    display: block;
+    font-size: 15px;
+    font-weight: 300;
+    padding: 3px 0;
+}
+.wc-form .wc-form-fields .wc-field{
+    width: 100%;
+    height: 38px;
+    font-size: 15px;
+}
+.wc-form .wc-form-fields .wc-field:focus{
+    border-color: var(--wc-btn-bg);
+    box-shadow: none;
+}
+.wc-form .wc-btn{
+    margin-top: 10px;
+}
+
+.wc-optimize-chart-wrap {
+    max-width: 300px;
+    max-height: 350px;
+    padding: 10px;
+    border: 1px solid var(--wc-border);
+}
+.optimized-chart-label ul{
+    display: flex;
+    justify-content: space-evenly;
+}
+.optimized-chart-label ul li{
+    box-shadow: rgb(0 0 0 / 8%) 0px 4px 6px -1px, rgb(0 0 0 / 2%) 0px 2px 4px -1px;
+    border: 1px solid var(--wc-border);
+    margin: 0;
+}
+.optimized-chart-label ul li span{
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin:0 5px ;
+    border-radius: 3px;
+}
+.wc_header_nav ul {
+    display: flex;
+}
+.wc_header_nav ul li {
+    margin: 0 10px ;
+    border:1px solid var(--wc-border) ;
+    box-shadow: rgb(0 0 0 / 8%) 0px 4px 6px -1px, rgb(0 0 0 / 2%) 0px 2px 4px -1px;
+}
+.wc_header_nav ul li a{
+    color: var(--wc-text);
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: none;
+    padding: 15px 50px;
+    display: block;
+}
