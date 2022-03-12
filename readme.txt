@@ -27,16 +27,15 @@ Webp Converter and compressor is a great image compressor and the ultimate solut
 1. Go to you administration area in WordPress `Plugins > Add`
 2. Look for `Webp Converter and compressor` (use search form)
 3. Click on Install and activate the plugin
-4. Optional: find the settings page through `Settings > Imagify`
 
 = FTP Method =
-1. Upload the complete `imagify` folder to the `/wp-content/plugins/` directory
+1. Upload the complete `Webp Converter and compressor` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Optional: find the settings page through `Webp Converter menu`
 
 == Frequently Asked Questions ==
 
-=How can I measure the impact of Imagify on speed score? =
+=How can I measure the impact of Webp Converter and compressor on speed score? =
 
 You can use GTMetrix and Google PageSpeed Insights to check the relevant suggestions. It is recommended to test the following metrics before and after the image optimization:
 
@@ -45,7 +44,7 @@ You can use GTMetrix and Google PageSpeed Insights to check the relevant suggest
 * Serve images in next-gen formats (PageSpeed Insights)
 * Efficiently encode images (PageSpeed Insights)
 
-=How long are images stored by Imagify?=
+=How long are images stored by Webp Converter and compressor?=
 
 Once your images have been optimized via the WP plugin, compressed images stay on your end forever.
 
