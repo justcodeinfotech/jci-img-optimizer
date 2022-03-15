@@ -3,15 +3,15 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-if (!function_exists('wc_senitize_array')) {
+if (!function_exists('jciwc_senitize_array')) {
     // senitized the whole array from post
-    function wc_senitize_array($array)
+    function jciwc_senitize_array($array)
     {
         if (!empty($array) && (is_array($array) || is_object($array))) {
             foreach ($array as $key  => $val) {
 
                 if (is_array($val) || is_object($val)) {
-                    $senitized_array[$key] = wc_senitize_array($val); // if inside array then call function again
+                    $senitized_array[$key] = jciwc_senitize_array($val); // if inside array then call function again
                 } else {
                     // senitized key and value
                     $senitized_array[sanitize_key($key)] = sanitize_text_field($val); // if not array then directly push it 
@@ -24,20 +24,24 @@ if (!function_exists('wc_senitize_array')) {
     }
 }
 
-if (!function_exists('wc_convertImageToWebP')) {
-    function wc_convertImageToWebP($source, $destination, $quality = 80, $resize = 3000)
+if (!function_exists('jciwc_convertImageToWebP')) {
+    function jciwc_convertImageToWebP($source, $destination, $quality = 80, $resize = 3000)
     {
+        $newimg = '';
+
         if (!file_exists($source)) {
-            return; // if file is not exsit
+            return $newimg; // if file is not exsit
         }
 
         $extension = pathinfo($source, PATHINFO_EXTENSION);
+
         if ($extension == 'jpeg' || $extension == 'jpg')
             $image = imagecreatefromjpeg($source);
         elseif ($extension == 'gif')
             $image = imagecreatefromgif($source);
         elseif ($extension == 'png')
             $image = imagecreatefrompng($source);
+
 
         $newName = basename($source);
         $newName = preg_replace("/\.[^.]+$/", "", $newName);
@@ -56,7 +60,10 @@ if (!function_exists('wc_convertImageToWebP')) {
             $image = $dst;
         }
 
-        $newimg = imagewebp($image, $destination . $newName, $quality);
+
+
+        $newimg = @imagewebp($image, $destination . $newName, $quality);
+
         return $newimg;
     }
 }

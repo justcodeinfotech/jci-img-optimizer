@@ -1,6 +1,6 @@
 <?php
-if (!class_exists('wc_frontedController')) {
-    class wc_frontedController
+if (!class_exists('jciwc_frontedController')) {
+    class jciwc_frontedController
     {
         public function __construct()
         {
@@ -31,5 +31,5 @@ if (!class_exists('wc_frontedController')) {
             return $image;
         }
     }
-    new wc_frontedController();
+    new jciwc_frontedController();
 }

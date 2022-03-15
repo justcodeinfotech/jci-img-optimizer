@@ -39,6 +39,7 @@ if (!class_exists('JCI_WC_adminController')) {
                 include_once JCI_WC_PATH . 'views/admin/compress.php'; // get compress setiings with chart 
             } else {
                 $config = get_option('jci_img_comfig', 1); // get settings config
+                @extract($config);
                 include_once JCI_WC_PATH . 'views/admin/general-settings.php'; // get setiings view 
             }
         }
@@ -68,7 +69,8 @@ if (!class_exists('JCI_WC_adminController')) {
 
             wp_enqueue_style('wc-admin', JCI_WC_URL . 'assets/admin/css/admin.min.css', __FILE__);
             wp_enqueue_script('wc-chart', JCI_WC_URL . 'assets/admin/js/chart.min.js', array(), JCI_WC_VERSION, true);
-            wp_enqueue_script('wc-admin', JCI_WC_URL . 'assets/admin/js/admin.min.js', array(), JCI_WC_VERSION, true);
+            // wp_enqueue_script('wc-admin', JCI_WC_URL . 'assets/admin/js/admin.min.js', array(), JCI_WC_VERSION, true);
+            wp_enqueue_script('wc-admin', JCI_WC_URL . 'assets/admin/js/admin.min.js', array(), time(), true);
             wp_localize_script('wc-admin', 'wc_obj', array('ajax_url' => admin_url('admin-ajax.php')));
         }
 
@@ -77,10 +79,12 @@ if (!class_exists('JCI_WC_adminController')) {
             if (isset($data['form_base']) && $data['form_base'] == 'img_config') {
 
                 unset($data['form_base']);
-                $sanitized_arr = wc_senitize_array($data); // sanitize whole array before add to database
+                $sanitized_arr = jciwc_senitize_array($data); // sanitize whole array before add to database
 
                 /* if verify nonce then save the data only */
                 if (isset($sanitized_arr['wc_general_settings_nonce']) && wp_verify_nonce($sanitized_arr['wc_general_settings_nonce'], 'wc_general_settings_nonce')) {
+                    unset($sanitized_arr['wc_general_settings_nonce']); // unset the nonce 
+                    unset($sanitized_arr['_wp_http_referer']); // unset refer
                     update_option('jci_img_comfig', $sanitized_arr);
                 }
             }

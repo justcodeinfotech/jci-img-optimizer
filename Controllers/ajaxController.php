@@ -1,6 +1,6 @@
 <?php
-if (!class_exists('wc_ajaxController')) {
-    class wc_ajaxController
+if (!class_exists('jciwc_ajaxController')) {
+    class jciwc_ajaxController
     {
         public $ajaxList = [];
         public function __construct()
@@ -29,7 +29,7 @@ if (!class_exists('wc_ajaxController')) {
         {
             $data = isset($_POST['data']) ? $_POST['data'] : '';
             parse_str($data, $data); // unserlize form data
-            $data = wc_senitize_array($data); // sanitize whole array before processing the data
+            $data = jciwc_senitize_array($data); // sanitize whole array before processing the data
 
             if (empty($data) || !isset($data['wc_optimize_nonce'])) {
                 $response = array('success' => true, 'error' => 'Bosted 1 !!');  //if $data is set
@@ -63,6 +63,7 @@ if (!class_exists('wc_ajaxController')) {
             $query_optimized_images = new WP_Query($query_optimized_images_args);
             $optimization_images = count($query_optimized_images->posts);
 
+            $data = '';
             if ($optimization_images > 0) {
 
                 $config = get_option('jci_img_comfig', 1); // get settings config
@@ -83,9 +84,10 @@ if (!class_exists('wc_ajaxController')) {
 
                         // First optimize opriganl image
                         $orignalIMG = wp_get_original_image_url($imageID);
+
                         if (!empty($orignalIMG)) {
                             $img_file_name = basename($orignalIMG); // filename
-                            $data = wc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                            $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
                         }
 
                         // Optimized all resize images
@@ -93,21 +95,31 @@ if (!class_exists('wc_ajaxController')) {
                             $img_atts = wp_get_attachment_image_src($imageID, $key);
                             if (!empty($img_atts[0])) {
                                 $img_file_name = basename($img_atts[0]); // filename
-                                $data = wc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                                $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
                             }
                         }
                     } else {
+
+                        // Work when there is only 1 image and it uploaded before using enable gd extention
                         $file_path = wp_get_original_image_path($imageID); //image path
                         $file_name = basename($file_path); // filename
                         $folder_path =  str_replace($file_name, "", $file_path); // file-Folder path
                         $img_atts = wp_get_original_image_url($imageID);
-                        if (!empty($img_atts[0])) {
+
+                        if (!empty($img_atts[0]) && is_array($img_atts)) {
                             $img_file_name = basename($img_atts[0]); // filename
-                            $data = wc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                            $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                        } elseif (!empty($img_atts)) {
+                            $img_file_name = basename($img_atts); // filename
+                            $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
                         }
                     }
 
-                    update_post_meta($imageID, 'jci_wc_optimized', 1);
+                    if ($data == 1) {
+                        update_post_meta($imageID, 'jci_wc_optimized', 1);
+                    } else {
+                        update_post_meta($imageID, 'jci_wc_optimized', 2);
+                    }
                 }
             }
 
@@ -120,5 +132,5 @@ if (!class_exists('wc_ajaxController')) {
             exit;
         }
     }
-    new wc_ajaxController();
+    new jciwc_ajaxController();
 }

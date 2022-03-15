@@ -13,7 +13,6 @@ require_once JCI_WC_PATH . 'Controllers/ajaxController.php';
 require_once JCI_WC_PATH . 'Controllers/frontedController.php';
 
 add_action('init', function () {
-
     if (is_admin()) {
         require_once JCI_WC_PATH . 'Controllers/admin/adminController.php';
     }
