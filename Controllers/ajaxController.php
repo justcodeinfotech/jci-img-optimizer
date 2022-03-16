@@ -71,7 +71,7 @@ if (!class_exists('jciwc_ajaxController')) {
                 $newIMG_Resize = empty($config['img_resize']) ? 80 : $config['img_resize'];
 
                 foreach ($query_optimized_images->posts as $imageID) {
-
+                    $already_update = 0;
                     $metadata = wp_get_attachment_metadata($imageID);
 
                     if (!empty($metadata['sizes'])) {
@@ -88,7 +88,12 @@ if (!class_exists('jciwc_ajaxController')) {
                         if (!empty($orignalIMG)) {
                             $img_file_name = basename($orignalIMG); // filename
                             $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                            if ($data == 1) {
+                                $already_update = 1;
+                                update_post_meta($imageID, 'jci_wc_optimized', 1);
+                            }
                         }
+
 
                         // Optimized all resize images
                         foreach ($sizearr as $key => $val) {
@@ -96,6 +101,10 @@ if (!class_exists('jciwc_ajaxController')) {
                             if (!empty($img_atts[0])) {
                                 $img_file_name = basename($img_atts[0]); // filename
                                 $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                                if ($data == 1 && $already_update == 0) {
+                                    $already_update = 1;
+                                    update_post_meta($imageID, 'jci_wc_optimized', 1);
+                                }
                             }
                         }
                     } else {
@@ -113,12 +122,10 @@ if (!class_exists('jciwc_ajaxController')) {
                             $img_file_name = basename($img_atts); // filename
                             $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
                         }
-                    }
 
-                    if ($data == 1) {
-                        update_post_meta($imageID, 'jci_wc_optimized', 1);
-                    } else {
-                        update_post_meta($imageID, 'jci_wc_optimized', 2);
+                        if ($data == 1 && $already_update == 0) {
+                            update_post_meta($imageID, 'jci_wc_optimized', 1);
+                        }
                     }
                 }
             }

@@ -230,3 +230,32 @@ div#wpcontent{
     left: 0;
     top: -2px;
 }
+
+.button--loading{
+    position: relative;
+}
+.button--loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    right: 25px;
+    bottom: 0;
+    margin: auto;
+    border: 2px solid #fff;
+    border-top-color: rgb(55, 48, 163);
+    border-right-color: rgb(55, 48, 163);
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0%{ -webkit-transform: rotate(0deg); tranform: rotate(0deg);}
+  100%{ -webkit-transform: rotate(360deg); tranform: rotate(360deg);}
+}
+
+@keyframes spin {
+  0%{ -webkit-transform: rotate(0deg); transform: rotate(0deg);}
+  100%{ -webkit-transform: rotate(360deg); transform: rotate(360deg);}
+}

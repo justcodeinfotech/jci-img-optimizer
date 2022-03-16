@@ -61,9 +61,12 @@ include_once 'components/header.php'; ?>
             <form method="POST" id="wc-webp-optimize">
                 <?php wp_nonce_field('wc_optimize_nonce', 'wc_optimize_nonce');
                 if ($total_images != $optimized_images) {
-                    echo '<input type="submit" class="wc-btn" value="' .  __('Optimize now', 'jci-webp-compressor') . '">';
+                    echo ' <button type="submit" class="wc-btn">
+                    <span class="button__text">'.__('Optimize now', 'jci-webp-compressor').'</span>
+                </button>';
                 }
                 ?>
+
             </form>
         </div>
     </div>
