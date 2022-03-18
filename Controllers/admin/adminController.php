@@ -39,7 +39,9 @@ if (!class_exists('JCI_WC_adminController')) {
                 include_once JCI_WC_PATH . 'views/admin/compress.php'; // get compress setiings with chart 
             } else {
                 $config = get_option('jci_img_comfig', 1); // get settings config
-                @extract($config);
+                if(!empty($config) && is_array($config)){
+                    extract($config);
+                }
                 include_once JCI_WC_PATH . 'views/admin/general-settings.php'; // get setiings view 
             }
         }

@@ -74,6 +74,7 @@ if (!class_exists('jciwc_ajaxController')) {
                     $already_update = 0;
                     $metadata = wp_get_attachment_metadata($imageID);
 
+
                     if (!empty($metadata['sizes'])) {
                         // Wordpress all images 
                         $sizearr = $metadata['sizes'];
@@ -91,6 +92,7 @@ if (!class_exists('jciwc_ajaxController')) {
                             if ($data == 1) {
                                 $already_update = 1;
                                 update_post_meta($imageID, 'jci_wc_optimized', 1);
+                                $this->wc_webp_setimage($orignalIMG);
                             }
                         }
 
@@ -105,6 +107,9 @@ if (!class_exists('jciwc_ajaxController')) {
                                     $already_update = 1;
                                     update_post_meta($imageID, 'jci_wc_optimized', 1);
                                 }
+                                if ($data == 1) {
+                                    $this->wc_webp_setimage($img_atts[0]);
+                                }
                             }
                         }
                     } else {
@@ -118,9 +123,16 @@ if (!class_exists('jciwc_ajaxController')) {
                         if (!empty($img_atts[0]) && is_array($img_atts)) {
                             $img_file_name = basename($img_atts[0]); // filename
                             $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+
+                            if ($data == 1) {
+                                $this->wc_webp_setimage($img_atts[0]);
+                            }
                         } elseif (!empty($img_atts)) {
                             $img_file_name = basename($img_atts); // filename
                             $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                            if ($data == 1) {
+                                $this->wc_webp_setimage($img_atts);
+                            }
                         }
 
                         if ($data == 1 && $already_update == 0) {
@@ -137,6 +149,61 @@ if (!class_exists('jciwc_ajaxController')) {
 
             wp_send_json($response);
             exit;
+        }
+
+
+        private function wc_webp_setimage($imageURL)
+        {
+            $db_imageURL = $this->remove_http($imageURL);
+
+            global $wpdb;
+            $post_tbl = $wpdb->prefix . "posts";
+            $sql = $wpdb->prepare("SELECT id,post_content  FROM $post_tbl WHERE `post_content` LIKE '%$db_imageURL%'");
+            $post_with_old_img_url = $wpdb->get_results($sql); // the post list include the ues of all old images
+
+
+            if (!empty($post_with_old_img_url)) {
+
+                foreach ($post_with_old_img_url as $post) {
+                    $postID = @$post->id;
+                    $post_content = @$post->post_content;
+
+                    if (empty($post_content))
+                        continue;
+
+
+                    $extension = pathinfo($db_imageURL, PATHINFO_EXTENSION);
+                    $new_img_url =   str_replace($extension, "webp", $db_imageURL);
+
+
+                    // Check image exist or not
+                    $newimgsize = @getimagesize('http://' . $new_img_url);
+
+                    if (!empty($newimgsize)) {
+                        // If image exsist then update and saved it to db;
+                        $new_post_content =  str_replace($db_imageURL, $new_img_url, $post_content);
+
+                        $my_post = array(
+                            'ID'           => $postID,
+                            'post_content' => $new_post_content,
+                        );
+
+                        // Update the post into the database
+                        wp_update_post($my_post);
+                    }
+                }
+            }
+        }
+
+        private function remove_http($url)
+        {
+            $disallowed = array('http://', 'https://');
+            foreach ($disallowed as $d) {
+                if (strpos($url, $d) === 0) {
+                    return str_replace($d, '', $url);
+                }
+            }
+            return $url;
         }
     }
     new jciwc_ajaxController();
