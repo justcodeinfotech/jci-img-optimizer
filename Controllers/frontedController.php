@@ -18,11 +18,10 @@ if (!class_exists('jciwc_frontedController')) {
                     $info = pathinfo($imgURL);
                     $comporessIMgurl = $info['dirname'] . '/' . $info['filename'] . '.webp';
 
-                    // Fetching headers
-                    $headers = @get_headers($comporessIMgurl);
-                    // Use condition to check the existence of URL
+                    $compressedimgPath = $_SERVER['DOCUMENT_ROOT'] . '/' . wp_make_link_relative($comporessIMgurl);
 
-                    if ($headers && strpos($headers[0], '200')) {
+                    if (file_exists($compressedimgPath)) {
+                        // if compress image file exsist then display 
                         $image[0] = $comporessIMgurl;
                     }
                 }

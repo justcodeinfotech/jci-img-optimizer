@@ -175,12 +175,9 @@ if (!class_exists('jciwc_ajaxController')) {
                     $extension = pathinfo($db_imageURL, PATHINFO_EXTENSION);
                     $new_img_url =   str_replace($extension, "webp", $db_imageURL);
 
-
-                    // Check image exist or not
-                    $newimgsize = @getimagesize('http://' . $new_img_url);
-
-                    if (!empty($newimgsize)) {
-                        // If image exsist then update and saved it to db;
+                    $compressedimgPath = $_SERVER['DOCUMENT_ROOT'] . wp_make_link_relative($imageURL);
+                    if (file_exists($compressedimgPath)) {
+                        // if compress image file exsist then display 
                         $new_post_content =  str_replace($db_imageURL, $new_img_url, $post_content);
 
                         $my_post = array(
