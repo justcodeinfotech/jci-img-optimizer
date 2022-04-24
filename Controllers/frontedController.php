@@ -5,7 +5,7 @@ if (!class_exists('jciwc_frontedController')) {
         public function __construct()
         {
             /*
-            * desperate V1.0 
+            * desperated in V1.0 
             * add_filter('wp_get_attachment_image_src', [$this, 'wc_attechment_src'], 10, 4);
             */
 
@@ -38,10 +38,17 @@ if (!class_exists('jciwc_frontedController')) {
                 return $content; // If there is not any images
             }
 
-            foreach ($images as $tag) {
-                $content = str_replace($tag[0], $this->wc_attechment_src($tag[0]), $content); // replace orignal image with webp images
-            }
 
+            // Loop for all the images available in dom 
+            foreach ($images as $img) {
+                // loop for particular IMG with src and diffrent SrcSets 
+
+                if (!empty($img)) {
+                    foreach ($img as $img_url) {
+                        $content = str_replace($img_url, $this->wc_attechment_src($img_url), $content); // replace orignal image with webp images
+                    }
+                }
+            }
 
             return $content;
         }
@@ -62,8 +69,22 @@ if (!class_exists('jciwc_frontedController')) {
 
         protected function process_image($image)
         {
-            preg_match_all('/<img(.*)src(.*)=(.*)"(.*)"/U', $image, $matches); // get src from img tag
-            return array_pop($matches);
+            $img_arr = [];
+            $dom = new DOMDocument();
+            $dom->loadHTML($image);
+            $tags = $dom->getElementsByTagName('img');
+            foreach ($tags as $tag) {
+                $img_arr[] = $tag->getAttribute('src');
+                $src_set_url = $tag->getAttribute('srcset');
+                if (!empty($src_set_url)) {
+                    $src_set_url = explode(",", $src_set_url);
+                    foreach ($src_set_url as $url) {
+                        $img_arr[] = strtok(trim($url), ' '); // get only url remove the size params 
+                    }
+                }
+            }
+
+            return array_unique($img_arr);
         }
 
 
