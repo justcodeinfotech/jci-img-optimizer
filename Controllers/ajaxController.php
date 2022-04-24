@@ -6,7 +6,6 @@ if (!class_exists('jciwc_ajaxController')) {
         public function __construct()
         {
             $this->ajaxList = [
-                'wc_firebase_config', // save admin webp config
                 'wc_webp_optimize', // optimize images now
             ];
 
@@ -66,9 +65,9 @@ if (!class_exists('jciwc_ajaxController')) {
             $data = '';
             if ($optimization_images > 0) {
 
-                $config = get_option('jci_img_comfig', 1); // get settings config
-                $newIMG_Quality = empty($config['img_quality']) ? 80 : $config['img_quality'];
-                $newIMG_Resize = empty($config['img_resize']) ? 80 : $config['img_resize'];
+                $config = get_option('jci_wc_config', 1); // get settings config
+                $newIMG_Quality = empty($config['img_quality']) ? 95 : $config['img_quality'];
+                $newIMG_Resize = empty($config['img_resize']) ? 1800 : $config['img_resize'];
 
                 foreach ($query_optimized_images->posts as $imageID) {
                     $already_update = 0;
@@ -151,17 +150,6 @@ if (!class_exists('jciwc_ajaxController')) {
 
             wp_send_json($response);
             exit;
-        }
-
-        private function remove_http($url)
-        {
-            $disallowed = array('http://', 'https://');
-            foreach ($disallowed as $d) {
-                if (strpos($url, $d) === 0) {
-                    return str_replace($d, '', $url);
-                }
-            }
-            return $url;
         }
     }
     new jciwc_ajaxController();

@@ -18,13 +18,15 @@ if (!class_exists('JCI_WC_adminController')) {
             }
 
             /* Load admin menu */
-            add_action('admin_menu', array($this, 'wc_admin_menu'), 100);
+            add_action('admin_menu', array($this, 'jci_wc_admin_menu'), 100);
 
             /* Load css and JS */
             add_action('admin_enqueue_scripts', [$this, 'wc_admin_css_js']);
+
+            add_action('delete_attachment', [$this, 'jci_wc_delete_attachment']);
         }
 
-        public function wc_admin_menu()
+        public function jci_wc_admin_menu()
         {
             add_menu_page('jci-webp-compressor', 'Webp Converter', 'manage_options', 'jci-webp-compressor', array($this, 'wc_load_page'), 'dashicons-format-image', 25);
         }
@@ -38,8 +40,8 @@ if (!class_exists('JCI_WC_adminController')) {
             if ($tab != '' && $tab == 'compress') {
                 include_once JCI_WC_PATH . 'views/admin/compress.php'; // get compress setiings with chart 
             } else {
-                $config = get_option('jci_img_comfig', 1); // get settings config
-                if(!empty($config) && is_array($config)){
+                $config = get_option('jci_wc_config', 1); // get settings config
+                if (!empty($config) && is_array($config)) {
                     extract($config);
                 }
                 include_once JCI_WC_PATH . 'views/admin/general-settings.php'; // get setiings view 
@@ -87,9 +89,16 @@ if (!class_exists('JCI_WC_adminController')) {
                 if (isset($sanitized_arr['wc_general_settings_nonce']) && wp_verify_nonce($sanitized_arr['wc_general_settings_nonce'], 'wc_general_settings_nonce')) {
                     unset($sanitized_arr['wc_general_settings_nonce']); // unset the nonce 
                     unset($sanitized_arr['_wp_http_referer']); // unset refer
-                    update_option('jci_img_comfig', $sanitized_arr);
+                    update_option('jci_wc_config', $sanitized_arr);
                 }
             }
+        }
+
+        public function jci_wc_delete_attachment($attachment_id)
+        {
+            require_once 'delete_attachment.php';
+            $delete_attachment =  new jci_wc_delete_attachment();
+            $delete_attachment->delete_attachment($attachment_id); // delete the attachment
         }
     }
     new JCI_WC_adminController();
