@@ -83,7 +83,7 @@ if (!class_exists('jciwc_ajaxController')) {
                         $file_name = basename($file_path); // filename
                         $folder_path =  str_replace($file_name, "", $file_path); // file-Folder path
 
-                        // First optimize opriganl image
+                        // First optimize orignal image
                         $orignalIMG = wp_get_original_image_url($imageID);
 
                         if (!empty($orignalIMG)) {
@@ -92,7 +92,19 @@ if (!class_exists('jciwc_ajaxController')) {
                             if ($data == 1) {
                                 $already_update = 1;
                                 update_post_meta($imageID, 'jci_wc_optimized', 1);
-                                $this->wc_webp_setimage($orignalIMG);
+                            }
+
+                            /*  
+                            * Based on origanal image URL we fetch the scaled image and also compress them
+                            * Mostly this function us used for bigger resolution images
+                            */
+                            $ext = pathinfo($img_file_name, PATHINFO_EXTENSION); // get extension
+                            $img_file_name =  str_replace('.' . $ext, '', $img_file_name); // file name without extension
+                            $img_file_name = $img_file_name . '-scaled.' . $ext; // scaled img name 
+                            $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
+                            if ($data == 1 && $already_update == 0) {
+                                $already_update = 1;
+                                update_post_meta($imageID, 'jci_wc_optimized', 1);
                             }
                         }
 
@@ -107,14 +119,11 @@ if (!class_exists('jciwc_ajaxController')) {
                                     $already_update = 1;
                                     update_post_meta($imageID, 'jci_wc_optimized', 1);
                                 }
-                                if ($data == 1) {
-                                    $this->wc_webp_setimage($img_atts[0]);
-                                }
                             }
                         }
                     } else {
 
-                        // Work when there is only 1 image and it uploaded before using enable gd extention
+                        // Work when there is only 1 image (e.g : small img or not enabled gd extension )
                         $file_path = wp_get_original_image_path($imageID); //image path
                         $file_name = basename($file_path); // filename
                         $folder_path =  str_replace($file_name, "", $file_path); // file-Folder path
@@ -123,16 +132,9 @@ if (!class_exists('jciwc_ajaxController')) {
                         if (!empty($img_atts[0]) && is_array($img_atts)) {
                             $img_file_name = basename($img_atts[0]); // filename
                             $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
-
-                            if ($data == 1) {
-                                $this->wc_webp_setimage($img_atts[0]);
-                            }
                         } elseif (!empty($img_atts)) {
                             $img_file_name = basename($img_atts); // filename
                             $data = jciwc_convertImageToWebP($folder_path . $img_file_name, $folder_path, $newIMG_Quality, $newIMG_Resize);
-                            if ($data == 1) {
-                                $this->wc_webp_setimage($img_atts);
-                            }
                         }
 
                         if ($data == 1 && $already_update == 0) {
@@ -149,47 +151,6 @@ if (!class_exists('jciwc_ajaxController')) {
 
             wp_send_json($response);
             exit;
-        }
-
-
-        private function wc_webp_setimage($imageURL)
-        {
-            $db_imageURL = $this->remove_http($imageURL);
-
-            global $wpdb;
-            $post_tbl = $wpdb->prefix . "posts";
-            $sql = $wpdb->prepare("SELECT id,post_content  FROM $post_tbl WHERE `post_content` LIKE '%$db_imageURL%'");
-            $post_with_old_img_url = $wpdb->get_results($sql); // the post list include the ues of all old images
-
-
-            if (!empty($post_with_old_img_url)) {
-
-                foreach ($post_with_old_img_url as $post) {
-                    $postID = @$post->id;
-                    $post_content = @$post->post_content;
-
-                    if (empty($post_content))
-                        continue;
-
-
-                    $extension = pathinfo($db_imageURL, PATHINFO_EXTENSION);
-                    $new_img_url =   str_replace($extension, "webp", $db_imageURL);
-
-                    $compressedimgPath = $_SERVER['DOCUMENT_ROOT'] . wp_make_link_relative($imageURL);
-                    if (file_exists($compressedimgPath)) {
-                        // if compress image file exsist then display 
-                        $new_post_content =  str_replace($db_imageURL, $new_img_url, $post_content);
-
-                        $my_post = array(
-                            'ID'           => $postID,
-                            'post_content' => $new_post_content,
-                        );
-
-                        // Update the post into the database
-                        wp_update_post($my_post);
-                    }
-                }
-            }
         }
 
         private function remove_http($url)
